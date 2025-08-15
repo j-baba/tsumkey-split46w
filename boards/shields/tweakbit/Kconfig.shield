@@ -1,0 +1,5 @@
+config SHIELD_TSUMKEY_R
+    def_bool $(shields_list_contains,tsumkey_r)
+
+config SHIELD_TSUMKEY_L
+    def_bool $(shields_list_contains,tsumkey_l)
