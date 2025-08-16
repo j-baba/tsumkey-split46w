@@ -7,7 +7,7 @@
 #include <dt-bindings/zmk/pointing.h>
 
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 100
-#define MOUSE 3
+#define MOUSE 6
 
 // OS設定を日本語キーボードのまま使用するための変換定義
 #define JP_DQUOTE       AT                // "
@@ -92,8 +92,8 @@
 &kp Q             &kp W           &kp E           &kp R             &kp T          &kp Y          &kp U           &kp I           &kp O            &kp P
 &mt LEFT_SHIFT A  &kp S           &kp D           &kp F             &kp G          &kp H          &kp J           &kp K           kp L             &kp JP_COLON
 &mt LCTRL Z       &mt LEFT_ALT X  &mt LCTRL C     &mt LEFT_SHIFT V  &kp B          &kp N          &kp M           &kp COMMA       &kp DOT          &kp SLASH
-&kp LEFT_WIN                      &kp UP_ARROW    &lt 3 ESC         &lt 1 SPACE    &lt 2 ENTER    &mkp MB1        &kp UP_ARROW                     &kp MINUS
-                  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW   &KP TAB        &kp BACKSPACE  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW
+&kp LEFT_WIN                      &kp UP_ARROW    &lt 3 ESC         &lt 1 SPACE    &lt 2 ENTER    &mkp MB1        &mmv MOVE_UP                     &kp MINUS
+                  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW   &KP TAB        &kp BACKSPACE  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT
             >;
         };
 
