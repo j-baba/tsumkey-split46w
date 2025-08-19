@@ -1,6 +1,6 @@
 file_format: "1"
 id: tsumkey
-name: tsumkey-split46w
+name: tsumkey
 type: shield
 url: https://github.com/j-baba/tsumkey-split46w
 requires: [seeeduino_xiao_ble]
