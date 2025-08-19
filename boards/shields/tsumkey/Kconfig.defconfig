@@ -28,12 +28,6 @@ config ZMK_POINTING
 config SPI
     default n
 
-config PMW3610
-    default n
-
-config PMW3610_SWAP_XY
-    default n
-
 config RGBLED_WIDGET_BATTERY_LEVEL_HIGH
     default 30
 
