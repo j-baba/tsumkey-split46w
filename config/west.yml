@@ -4,7 +4,7 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: j-baba
       url-base: https://github.com/j-baba
-    - name: caksoylar  # <-- RGB LED
+    - name: caksoylar
       url-base: https://github.com/caksoylar  
   projects:
     - name: zmk
