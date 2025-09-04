@@ -1,5 +1,4 @@
 #include "tsumkey.dtsi"
-#include <input/processors.dtsi>
 
 &default_transform {
     col-offset = <5>;
