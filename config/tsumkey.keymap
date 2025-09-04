@@ -93,8 +93,8 @@
 &kp Q         &kp W           &kp E           &kp R            &kp T          &kp Y          &kp U           &kp I           &kp O            &kp P
 &mt LSHIFT A  &kp S           &kp D           &kp F            &kp G          &kp H          &kp J           &kp K           &kp L            &kp JP_COLON
 &mt LCTRL Z   &mt LALT X      &mt LCTRL C     &mt LSHIFT V     &kp B          &kp N          &kp M           &kp COMMA       &kp DOT          &kp SLASH
-&kp LEFT_GUI                  &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB1        &mmv MOVE_UP                     &kp MINUS
-              &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TAB        &kp BACKSPACE  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT
+&kp LEFT_GUI  &none           &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB1        &mmv MOVE_UP    &none            &kp MINUS
+&none         &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TAB        &kp BACKSPACE  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &none
             >;
         };
 
@@ -103,8 +103,8 @@
 &kp JP_QUOTE  &kp JP_DQUOTE   &kp EXCLAMATION  &trans            &kp JP_BACKQUOTE    &kp JP_PIPE       &kp JP_LPAREN    &kp JP_RPAREN    &trans           &kp PERCENT
 &kp JP_AT     &kp SEMICOLON   &kp DOLLAR       &kp JP_PLUS       &kp JP_ASTERISK     &kp HASH          &kp JP_LBRACKET  &kp JP_RBRACKET  &trans           &kp JP_CARET
 &trans        &trans          &kp JP_COLON     &trans            &kp JP_BSLH         &kp JP_AMPERSAND  &kp JP_LBRACE    &kp JP_RBRACE    &trans           &kp JP_TILDE
-&kp LEFT_GUI                  &kp UP_ARROW     &lt 3 ESC         &lt 1 SPACE         &lt 2 ENTER       &mkp MB1         &mmv MOVE_UP                      &kp JP_UNDERSCORE
-              &kp LEFT_ARROW  &kp DOWN_ARROW   &kp RIGHT_ARROW   &kp TAB             &kp DELETE        &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_RIGHT
+&kp LEFT_GUI  &trans          &kp UP_ARROW     &lt 3 ESC         &lt 1 SPACE         &lt 2 ENTER       &mkp MB1         &mmv MOVE_UP     &trans           &kp JP_UNDERSCORE
+&trans        &kp LEFT_ARROW  &kp DOWN_ARROW   &kp RIGHT_ARROW   &kp TAB             &kp DELETE        &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_RIGHT  &trans
             >;
         };
 
@@ -113,8 +113,8 @@
 &kp F1        &kp F2          &kp F3          &kp F4           &kp F5         &kp COMMA      &kp NUMBER_7    &kp NUMBER_8    &kp NUMBER_9     &trans
 &kp F6        &kp F7          &kp F8          &kp F9           &kp F10        &kp DOT        &kp NUMBER_4    &kp NUMBER_5    &kp NUMBER_6     &trans
 &kp F11       &kp F12         &trans          &trans           &trans         &kp NUMBER_0   &kp NUMBER_1    &kp NUMBER_2    &kp NUMBER_3     &trans
-&kp LEFT_GUI                  &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB1        &mmv MOVE_UP                     &kp MINUS
-              &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TAB        &kp BACKSPACE  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT
+&kp LEFT_GUI  &trans          &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB1        &mmv MOVE_UP    &trans           &kp MINUS
+&trans        &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TAB        &kp BACKSPACE  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &trans
             >;
         };
 
@@ -123,8 +123,8 @@
 &trans  &trans          &trans          &trans           &trans    &trans    &trans          &trans          &trans           &trans
 &trans  &trans          &trans          &trans           &trans    &trans    &trans          &trans          &trans           &trans
 &trans  &trans          &trans          &trans           &trans    &trans    &trans          &trans          &trans           &trans
-&trans                  &kp UP_ARROW    &trans           &trans    &trans    &mkp MB1        &mmv MOVE_UP                     &trans
-        &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans    &mkp MB2  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT
+&trans  &trans          &kp UP_ARROW    &trans           &trans    &trans    &mkp MB1        &mmv MOVE_UP    &trans           &trans
+&trans  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans    &mkp MB2  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &trans
             >;
         };
     };
