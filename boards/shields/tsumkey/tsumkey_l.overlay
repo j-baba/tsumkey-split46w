@@ -1,7 +1,8 @@
 #include "tsumkey.dtsi"
 
 &{/chosen} {
-    zmk,matrix_transform = &default_transform; /* = keymap_transform_left */
+    /delete-property/ zmk,matrix_transform;
+    zmk,matrix_transform = &default_transform;
 };
 
 / {

@@ -5,6 +5,7 @@
 };
 
 &{/chosen} {
+    /delete-property/ zmk,matrix_transform;
     zmk,matrix_transform = &right_transform;
 };
 
