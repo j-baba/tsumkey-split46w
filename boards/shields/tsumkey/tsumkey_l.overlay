@@ -2,7 +2,7 @@
 
 &{/chosen} {
     zmk,matrix_transform = &default_transform; /* = keymap_transform_left */
-}
+};
 
 / {
     kscan0: kscan {
