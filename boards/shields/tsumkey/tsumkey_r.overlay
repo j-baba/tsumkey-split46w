@@ -1,7 +1,11 @@
 #include "tsumkey.dtsi"
 
-&default_transform {
+&right_transform {
     col-offset = <5>;
+};
+
+&{/chosen} {
+    zmk,matrix_transform = &right_transform;
 };
 
 / {
