@@ -16,12 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Dump left DTS (/chosen & KSCAN)
+      # 0) コンテナで実行するシェルを、まずホストのワークスペース上に作成
+      - name: Prepare left introspection script (host)
         run: |
-          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -s <<'BASH'
+          mkdir -p ws
+          cat > ws/ci-left.sh <<'BASH'
           set -euxo pipefail
 
-          # 0) 簡易マニフェスト（存在しなければ作成）
+          # 0) 簡易 manifest（無ければ作成）
           if [ ! -f /work/config/west.yml ]; then
             mkdir -p /work/config
             cat > /work/config/west.yml <<'EOF'
@@ -39,26 +41,31 @@ jobs:
           EOF
           fi
 
-          git config --global --add safe.directory "*"
+          # 0.5) Git の安全ディレクトリ（CI対策）
+          git config --global --add safe.directory '*'
 
-          # 1) west 初期化＆依存取得
+          echo "::group::west init/update"
           mkdir -p /work/ws
           cd /work/ws
           west init -l /work/config
           cd "$(west topdir)"
           west update
           west zephyr-export
+          echo "::endgroup::"
 
-          # 2) 左側ビルド（★ EXTRA MODULES は必要なものだけ）
+          echo "::group::west build (left)"
+          # ★ 必要なモジュールのみを指定（循環回避）
           EXTRA_MODS="/work/zmk-rgbled-widget"
           west build -s /work/zmk/app -b seeeduino_xiao_ble -d /work/ws/build-left -- \
             -DSHIELD=tsumkey_l \
             -DZMK_CONFIG=/work/config \
             -DZMK_EXTRA_MODULES="${EXTRA_MODS}" || true
+          echo "::endgroup::"
 
-          echo "=== tree(build-left) ==="
+          echo "::group::tree(build-left)"
           ls -la /work/ws/build-left || true
           ls -la /work/ws/build-left/zephyr || true
+          echo "::endgroup::"
 
           if [ -f /work/ws/build-left/zephyr/zephyr.dts ]; then
             echo "=== /chosen (LEFT) ==="
@@ -73,10 +80,17 @@ jobs:
             exit 1
           fi
           BASH
+          chmod +x ws/ci-left.sh
 
+      # 1) さきほど作ったスクリプトを、コンテナ内で実行
+      - name: Dump left DTS (/chosen & KSCAN)
+        run: |
+          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '/work/ws/ci-left.sh'
+
+      # 2) ホスト側で存在確認→アーティファクト化
       - name: Verify DTS files exist (left, host side)
         run: |
-          ls -la "${{ github.workspace }}/ws/build-left/zephyr" || true
+          ls -la "${{ github.workspace }}/ws/build-left/zephyr"
           test -f "${{ github.workspace }}/ws/build-left/zephyr/zephyr.dts"
 
       - name: Upload DTS artifacts (left)
@@ -95,12 +109,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Dump right DTS (/chosen & KSCAN)
+      # 0) コンテナで実行するシェルを、まずホストのワークスペース上に作成
+      - name: Prepare right introspection script (host)
         run: |
-          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -s <<'BASH'
+          mkdir -p ws
+          cat > ws/ci-right.sh <<'BASH'
           set -euxo pipefail
 
-          # 0) 簡易マニフェスト（存在しなければ作成）
+          # 0) 簡易 manifest（無ければ作成）
           if [ ! -f /work/config/west.yml ]; then
             mkdir -p /work/config
             cat > /work/config/west.yml <<'EOF'
@@ -118,26 +134,31 @@ jobs:
           EOF
           fi
 
-          git config --global --add safe.directory "*"
+          # 0.5) Git の安全ディレクトリ（CI対策）
+          git config --global --add safe.directory '*'
 
-          # 1) west 初期化＆依存取得
+          echo "::group::west init/update"
           mkdir -p /work/ws
           cd /work/ws
           west init -l /work/config
           cd "$(west topdir)"
           west update
           west zephyr-export
+          echo "::endgroup::"
 
-          # 2) 右側ビルド（★ EXTRA MODULES は必要なものだけ）
+          echo "::group::west build (right)"
+          # ★ 必要なモジュールのみを指定（循環回避）
           EXTRA_MODS="/work/zmk-rgbled-widget"
           west build -s /work/zmk/app -b seeeduino_xiao_ble -d /work/ws/build-right -- \
-            -DSHIELD=tsumkey_r \
+            -DSHIELD=tsumkey_l \
             -DZMK_CONFIG=/work/config \
             -DZMK_EXTRA_MODULES="${EXTRA_MODS}" || true
+          echo "::endgroup::"
 
-          echo "=== tree(build-right) ==="
+          echo "::group::tree(build-right)"
           ls -la /work/ws/build-right || true
           ls -la /work/ws/build-right/zephyr || true
+          echo "::endgroup::"
 
           if [ -f /work/ws/build-right/zephyr/zephyr.dts ]; then
             echo "=== /chosen (RIGHT) ==="
@@ -152,10 +173,17 @@ jobs:
             exit 1
           fi
           BASH
+          chmod +x ws/ci-right.sh
 
+      # 1) さきほど作ったスクリプトを、コンテナ内で実行
+      - name: Dump right DTS (/chosen & KSCAN)
+        run: |
+          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '/work/ws/ci-right.sh'
+
+      # 2) ホスト側で存在確認→アーティファクト化
       - name: Verify DTS files exist (right, host side)
         run: |
-          ls -la "${{ github.workspace }}/ws/build-right/zephyr" || true
+          ls -la "${{ github.workspace }}/ws/build-right/zephyr"
           test -f "${{ github.workspace }}/ws/build-right/zephyr/zephyr.dts"
 
       - name: Upload DTS artifacts (right)
