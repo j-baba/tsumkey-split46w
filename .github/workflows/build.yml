@@ -1,25 +1,66 @@
+name: ZMK build + DTS dump
+
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
+  # 既存：ZMK 公式の再利用ワークフロー
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
 
-- name: Dump DTS (/chosen & KSCAN)
-  shell: bash
-  run: |
-    DTS=$(find "$GITHUB_WORKSPACE" /tmp -type f -name zephyr.dts 2>/dev/null | head -n1)
-    echo "DTS=$DTS"
-    echo "=== /chosen ==="
-    sed -n '/chosen {/,/};/p' "$DTS"
-    echo "=== KSCAN ==="
-    sed -n '/label = "KSCAN"/,/};/p' "$DTS"
+  # 左の DTS を独立に生成・ダンプ（Docker で最小ビルド）
+  introspect-left:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dump left DTS (/chosen & KSCAN)
+        run: |
+          docker run --rm -v "$PWD":/work -w /work ghcr.io/zmkfirmware/zmk-dev-arm:stable bash -lc '
+            west init -l zmk/app && west update
+            west build -b seeeduino_xiao_ble -d build-left -- \
+              -DSHIELD=tsumkey_l \
+              -DZMK_CONFIG=$PWD/config \
+              -DZMK_EXTRA_MODULES=$PWD
+            echo "=== /chosen (LEFT) ==="
+            sed -n "/chosen {/,/};/p" build-left/zephyr/zephyr.dts
+            echo "=== KSCAN (LEFT) ==="
+            sed -n "/label = \"KSCAN\"/,/};/p" build-left/zephyr/zephyr.dts
+          '
+      - name: Upload DTS artifacts (left)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dts-left
+          path: |
+            build-left/zephyr/zephyr.dts
+            build-left/zephyr/zephyr.dts.pre
+            build-left/zephyr/include/generated/devicetree_generated.h
+          if-no-files-found: error
 
-- name: Upload DTS artifacts
-  uses: actions/upload-artifact@v4
-  with:
-    name: dts-left
-    path: |
-      **/build*/zephyr/zephyr.dts
-      **/build*/zephyr/zephyr.dts.pre
-      **/build*/zephyr/include/generated/devicetree_generated.h
-    if-no-files-found: warn
+  # 右の DTS も同様に（比較用）
+  introspect-right:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dump right DTS (/chosen & KSCAN)
+        run: |
+          docker run --rm -v "$PWD":/work -w /work ghcr.io/zmkfirmware/zmk-dev-arm:stable bash -lc '
+            west init -l zmk/app && west update
+            west build -b seeeduino_xiao_ble -d build-right -- \
+              -DSHIELD=tsumkey_r \
+              -DZMK_CONFIG=$PWD/config \
+              -DZMK_EXTRA_MODULES=$PWD
+            echo "=== /chosen (RIGHT) ==="
+            sed -n "/chosen {/,/};/p" build-right/zephyr/zephyr.dts
+            echo "=== KSCAN (RIGHT) ==="
+            sed -n "/label = \"KSCAN\"/,/};/p" build-right/zephyr/zephyr.dts
+          '
+      - name: Upload DTS artifacts (right)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dts-right
+          path: |
+            build-right/zephyr/zephyr.dts
+            build-right/zephyr/zephyr.dts.pre
+            build-right/zephyr/include/generated/devicetree_generated.h
+          if-no-files-found: error
