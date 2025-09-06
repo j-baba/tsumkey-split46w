@@ -17,6 +17,8 @@
 };
 
 &{/chosen} {
+    /delete-property/ zmk,matrix-transform;
+    /delete-property/ zmk,kscan;
     zmk,matrix-transform = &active_transform_r;
     zmk,kscan = &kscan0;
 };
