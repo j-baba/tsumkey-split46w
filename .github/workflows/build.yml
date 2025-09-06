@@ -6,11 +6,10 @@ permissions:
   contents: read
 
 jobs:
-  # 既存の本番ビルド（ZMK公式の再利用ワークフロー）
+  # 本番ビルド（既存）
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
 
-  # 左のDTSを生成して可視化
   introspect-left:
     runs-on: ubuntu-latest
     needs: build
@@ -40,22 +39,24 @@ jobs:
                 > /work/config/west.yml
             fi
 
-            # 0.5) Git の安全ディレクトリを緩和（CI用）
+            # 0.5) Git の安全ディレクトリ（CI対策）
             git config --global --add safe.directory "*"
 
             # 1) west ワークスペース作成
             mkdir -p /work/ws && cd /work/ws
             west init -l /work/config
 
-            # 2) ワークスペースのトップへ移動（= /work）
+            # 2) ワークスペースのトップ（= /work）に移動
             cd "$(west topdir)"
             echo "TOPDIR=$(pwd)"
 
-            # 3) 依存取得
+            # 3) 依存取得 → Zephyr を CMake に登録
             west update
             west list || true
+            west zephyr-export
+            echo "ZEPHYR_BASE=${ZEPHYR_BASE:-"(unset)"}"
 
-            # 4) 左用ビルド（出力は /work/ws/build-left へ）
+            # 4) 左用ビルド（出力は /work/ws/build-left）
             west build -s zmk/app -b seeeduino_xiao_ble -d /work/ws/build-left -- \
               -DSHIELD=tsumkey_l \
               -DZMK_CONFIG=/work/config \
@@ -88,7 +89,6 @@ jobs:
             ws/build-left/zephyr/include/generated/devicetree_generated.h
           if-no-files-found: error
 
-  # 右のDTSを生成して可視化
   introspect-right:
     runs-on: ubuntu-latest
     needs: build
@@ -118,22 +118,24 @@ jobs:
                 > /work/config/west.yml
             fi
 
-            # 0.5) Git の安全ディレクトリを緩和（CI用）
+            # 0.5) Git の安全ディレクトリ（CI対策）
             git config --global --add safe.directory "*"
 
             # 1) west ワークスペース作成
             mkdir -p /work/ws && cd /work/ws
             west init -l /work/config
 
-            # 2) ワークスペースのトップへ移動（= /work）
+            # 2) ワークスペースのトップ（= /work）に移動
             cd "$(west topdir)"
             echo "TOPDIR=$(pwd)"
 
-            # 3) 依存取得
+            # 3) 依存取得 → Zephyr を CMake に登録
             west update
             west list || true
+            west zephyr-export
+            echo "ZEPHYR_BASE=${ZEPHYR_BASE:-"(unset)"}"
 
-            # 4) 右用ビルド（出力は /work/ws/build-right へ）
+            # 4) 右用ビルド（出力は /work/ws/build-right）
             west build -s zmk/app -b seeeduino_xiao_ble -d /work/ws/build-right -- \
               -DSHIELD=tsumkey_r \
               -DZMK_CONFIG=/work/config \
