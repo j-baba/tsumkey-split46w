@@ -74,14 +74,19 @@ jobs:
           fi
           BASH
 
+      - name: Verify DTS files exist (left, host side)
+        run: |
+          ls -la "${{ github.workspace }}/ws/build-left/zephyr" || true
+          test -f "${{ github.workspace }}/ws/build-left/zephyr/zephyr.dts"
+
       - name: Upload DTS artifacts (left)
         uses: actions/upload-artifact@v4
         with:
           name: dts-left
           path: |
-            ws/build-left/zephyr/zephyr.dts
-            ws/build-left/zephyr/zephyr.dts.pre
-            ws/build-left/zephyr/include/generated/devicetree_generated.h
+            ${{ github.workspace }}/ws/build-left/zephyr/zephyr.dts
+            ${{ github.workspace }}/ws/build-left/zephyr/zephyr.dts.pre
+            ${{ github.workspace }}/ws/build-left/zephyr/include/generated/devicetree_generated.h
           if-no-files-found: error
 
   introspect-right:
@@ -148,12 +153,17 @@ jobs:
           fi
           BASH
 
+      - name: Verify DTS files exist (right, host side)
+        run: |
+          ls -la "${{ github.workspace }}/ws/build-right/zephyr" || true
+          test -f "${{ github.workspace }}/ws/build-right/zephyr/zephyr.dts"
+
       - name: Upload DTS artifacts (right)
         uses: actions/upload-artifact@v4
         with:
           name: dts-right
           path: |
-            ws/build-right/zephyr/zephyr.dts
-            ws/build-right/zephyr/zephyr.dts.pre
-            ws/build-right/zephyr/include/generated/devicetree_generated.h
+            ${{ github.workspace }}/ws/build-right/zephyr/zephyr.dts
+            ${{ github.workspace }}/ws/build-right/zephyr/zephyr.dts.pre
+            ${{ github.workspace }}/ws/build-right/zephyr/include/generated/devicetree_generated.h
           if-no-files-found: error
