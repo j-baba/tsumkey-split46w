@@ -3,3 +3,23 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+
+- name: Dump DTS (/chosen & KSCAN)
+  shell: bash
+  run: |
+    DTS=$(find "$GITHUB_WORKSPACE" /tmp -type f -name zephyr.dts 2>/dev/null | head -n1)
+    echo "DTS=$DTS"
+    echo "=== /chosen ==="
+    sed -n '/chosen {/,/};/p' "$DTS"
+    echo "=== KSCAN ==="
+    sed -n '/label = "KSCAN"/,/};/p' "$DTS"
+
+- name: Upload DTS artifacts
+  uses: actions/upload-artifact@v4
+  with:
+    name: dts-left
+    path: |
+      **/build*/zephyr/zephyr.dts
+      **/build*/zephyr/zephyr.dts.pre
+      **/build*/zephyr/include/generated/devicetree_generated.h
+    if-no-files-found: warn
