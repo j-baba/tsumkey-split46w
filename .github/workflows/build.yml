@@ -7,16 +7,20 @@ permissions:
   packages: read
 
 jobs:
-  # 既存：ZMK 公式の再利用ワークフロー
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
 
-  # 左の DTS を独立に生成・ダンプ（Docker で最小ビルド）
   introspect-left:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - uses: actions/checkout@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Dump left DTS (/chosen & KSCAN)
         run: |
           docker run --rm -v "$PWD":/work -w /work ghcr.io/zmkfirmware/zmk-dev-arm:stable bash -lc '
@@ -40,12 +44,17 @@ jobs:
             build-left/zephyr/include/generated/devicetree_generated.h
           if-no-files-found: error
 
-  # 右の DTS も同様に（比較用）
   introspect-right:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - uses: actions/checkout@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Dump right DTS (/chosen & KSCAN)
         run: |
           docker run --rm -v "$PWD":/work -w /work ghcr.io/zmkfirmware/zmk-dev-arm:stable bash -lc '
