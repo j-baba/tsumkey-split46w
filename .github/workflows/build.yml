@@ -3,8 +3,7 @@ name: ZMK build + DTS dump
 on: [push, pull_request, workflow_dispatch]
 
 permissions:
-  contents: read
-  packages: read
+  contents: read   # （packages: read は不要）
 
 jobs:
   build:
@@ -15,15 +14,9 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v4
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Dump left DTS (/chosen & KSCAN)
         run: |
-          docker run --rm -v "$PWD":/work -w /work ghcr.io/zmkfirmware/zmk-dev-arm:stable bash -lc '
+          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '
             west init -l zmk/app && west update
             west build -b seeeduino_xiao_ble -d build-left -- \
               -DSHIELD=tsumkey_l \
@@ -49,15 +42,9 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v4
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Dump right DTS (/chosen & KSCAN)
         run: |
-          docker run --rm -v "$PWD":/work -w /work ghcr.io/zmkfirmware/zmk-dev-arm:stable bash -lc '
+          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '
             west init -l zmk/app && west update
             west build -b seeeduino_xiao_ble -d build-right -- \
               -DSHIELD=tsumkey_r \
