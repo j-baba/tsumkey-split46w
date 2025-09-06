@@ -17,11 +17,14 @@ jobs:
       - name: Dump left DTS (/chosen & KSCAN)
         run: |
           docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '
-            west init -l zmk/app && west update
-            west build -b seeeduino_xiao_ble -d build-left -- \
+            set -e
+            mkdir -p ws && cd ws
+            west init -m https://github.com/zmkfirmware/zmk.git -b main .
+            west update
+            west build -s zmk/app -b seeeduino_xiao_ble -d build-left -- \
               -DSHIELD=tsumkey_l \
-              -DZMK_CONFIG=$PWD/config \
-              -DZMK_EXTRA_MODULES=$PWD
+              -DZMK_CONFIG=/work/config \
+              -DZMK_EXTRA_MODULES=/work
             echo "=== /chosen (LEFT) ==="
             sed -n "/chosen {/,/};/p" build-left/zephyr/zephyr.dts
             echo "=== KSCAN (LEFT) ==="
