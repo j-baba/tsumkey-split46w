@@ -40,6 +40,9 @@ jobs:
                 > /work/config/west.yml
             fi
 
+            # 0.5) Git の安全ディレクトリを緩和（CI用）
+            git config --global --add safe.directory "*"
+
             # 1) west ワークスペース作成 & 依存取得
             mkdir -p ws && cd ws
             west init -l /work/config
@@ -108,6 +111,9 @@ jobs:
                 "    path: config" \
                 > /work/config/west.yml
             fi
+
+            # 0.5) Git の安全ディレクトリを緩和（CI用）
+            git config --global --add safe.directory "*"
 
             # 1) west ワークスペース作成 & 依存取得
             mkdir -p ws && cd ws
