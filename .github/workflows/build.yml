@@ -6,7 +6,7 @@ permissions:
   contents: read
 
 jobs:
-  # 既存の本番ビルド（ZMK公式の再利用ワークフロー）
+  # 通常のZMKビルド
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
 
@@ -18,69 +18,61 @@ jobs:
 
       - name: Dump left DTS (/chosen & KSCAN)
         run: |
-          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '
-            set -euxo pipefail
+          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -s <<'BASH'
+          set -euxo pipefail
 
-            # 0) 一時 manifest を生成（既存 config/west.yml があっても上書きしない）
-            if [ ! -f /work/config/west.yml ]; then
-              mkdir -p /work/config
-              printf "%s\n" \
-                "manifest:" \
-                "  remotes:" \
-                "    - name: zmkfirmware" \
-                "      url-base: https://github.com/zmkfirmware" \
-                "  projects:" \
-                "    - name: zmk" \
-                "      remote: zmkfirmware" \
-                "      revision: main" \
-                "      import: app/west.yml" \
-                "  self:" \
-                "    path: config" \
-                > /work/config/west.yml
-            fi
+          # 0) 簡易マニフェスト（存在しなければ作成）
+          if [ ! -f /work/config/west.yml ]; then
+            mkdir -p /work/config
+            cat > /work/config/west.yml <<'EOF'
+          manifest:
+            remotes:
+              - name: zmkfirmware
+                url-base: https://github.com/zmkfirmware
+            projects:
+              - name: zmk
+                remote: zmkfirmware
+                revision: main
+                import: app/west.yml
+            self:
+              path: config
+          EOF
+          fi
 
-            # 0.5) Git の安全ディレクトリ（CI対策）
-            git config --global --add safe.directory "*"
+          git config --global --add safe.directory "*"
 
-            # 1) west ワークスペース作成
-            mkdir -p /work/ws && cd /work/ws
-            west init -l /work/config
+          # 1) west 初期化＆依存取得
+          mkdir -p /work/ws
+          cd /work/ws
+          west init -l /work/config
+          cd "$(west topdir)"
+          west update
+          west zephyr-export
 
-            # 2) ワークスペースのトップ（= /work）に移動
-            cd "$(west topdir)"
-            echo "TOPDIR=$(pwd)"
+          # 2) 左側ビルド（★ EXTRA MODULES は必要なものだけ）
+          EXTRA_MODS="/work/zmk-rgbled-widget"
+          west build -s /work/zmk/app -b seeeduino_xiao_ble -d /work/ws/build-left -- \
+            -DSHIELD=tsumkey_l \
+            -DZMK_CONFIG=/work/config \
+            -DZMK_EXTRA_MODULES="${EXTRA_MODS}" || true
 
-            # 3) 依存取得 → Zephyr を CMake に登録
-            west update
-            west list || true
-            west zephyr-export
-            echo "ZEPHYR_BASE=${ZEPHYR_BASE:-"(unset)"}"
+          echo "=== tree(build-left) ==="
+          ls -la /work/ws/build-left || true
+          ls -la /work/ws/build-left/zephyr || true
 
-            # 4) 左用ビルド（出力は /work/ws/build-left）
-            west build -s zmk/app -b seeeduino_xiao_ble -d /work/ws/build-left -- \
-              -DSHIELD=tsumkey_l \
-              -DZMK_CONFIG=/work/config \
-              -DZMK_EXTRA_MODULES=/work || true
+          if [ -f /work/ws/build-left/zephyr/zephyr.dts ]; then
+            echo "=== /chosen (LEFT) ==="
+            sed -n '/chosen {/,/};/p' /work/ws/build-left/zephyr/zephyr.dts || true
 
-            echo "=== tree(build-left) ==="
-            ls -la /work/ws/build-left || true
-            ls -la /work/ws/build-left/zephyr || true
-
-            # 5) DTS 抜粋表示
-            if [ -f /work/ws/build-left/zephyr/zephyr.dts ]; then
-              echo "=== /chosen (LEFT) ==="
-              sed -n "/chosen {/,/};/p" /work/ws/build-left/zephyr/zephyr.dts || true
-
-              echo "=== KSCAN (LEFT) ==="
-              # awkで 'label = "KSCAN"' から対応する閉じカッコまでを出力（失敗時はgrepにフォールバック）
-              awk "/label = \"KSCAN\"/{f=1} f{print} /};/{if(f){exit}}" /work/ws/build-left/zephyr/zephyr.dts \
-                || { echo "(fallback) context around KSCAN:"; grep -n "label = \"KSCAN\"" -n -A40 -B5 /work/ws/build-left/zephyr/zephyr.dts || true; }
-            else
-              echo "::error::zephyr.dts not found. Dumping CMake/Zephyr logs..."
-              find /work/ws/build-left -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
-              exit 1
-            fi
-          '
+            echo "=== KSCAN (LEFT) ==="
+            awk '/label = "KSCAN"/{f=1} f{print} /};/{if(f){exit}}' /work/ws/build-left/zephyr/zephyr.dts \
+              || { echo "(fallback)"; grep -n 'label = "KSCAN"' -n -A40 -B5 /work/ws/build-left/zephyr/zephyr.dts || true; }
+          else
+            echo "::error::zephyr.dts not found. Dumping logs..."
+            find /work/ws/build-left -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
+            exit 1
+          fi
+          BASH
 
       - name: Upload DTS artifacts (left)
         uses: actions/upload-artifact@v4
@@ -100,68 +92,61 @@ jobs:
 
       - name: Dump right DTS (/chosen & KSCAN)
         run: |
-          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '
-            set -euxo pipefail
+          docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -s <<'BASH'
+          set -euxo pipefail
 
-            # 0) 一時 manifest を生成（既存 config/west.yml があっても上書きしない）
-            if [ ! -f /work/config/west.yml ]; then
-              mkdir -p /work/config
-              printf "%s\n" \
-                "manifest:" \
-                "  remotes:" \
-                "    - name: zmkfirmware" \
-                "      url-base: https://github.com/zmkfirmware" \
-                "  projects:" \
-                "    - name: zmk" \
-                "      remote: zmkfirmware" \
-                "      revision: main" \
-                "      import: app/west.yml" \
-                "  self:" \
-                "    path: config" \
-                > /work/config/west.yml
-            fi
+          # 0) 簡易マニフェスト（存在しなければ作成）
+          if [ ! -f /work/config/west.yml ]; then
+            mkdir -p /work/config
+            cat > /work/config/west.yml <<'EOF'
+          manifest:
+            remotes:
+              - name: zmkfirmware
+                url-base: https://github.com/zmkfirmware
+            projects:
+              - name: zmk
+                remote: zmkfirmware
+                revision: main
+                import: app/west.yml
+            self:
+              path: config
+          EOF
+          fi
 
-            # 0.5) Git の安全ディレクトリ（CI対策）
-            git config --global --add safe.directory "*"
+          git config --global --add safe.directory "*"
 
-            # 1) west ワークスペース作成
-            mkdir -p /work/ws && cd /work/ws
-            west init -l /work/config
+          # 1) west 初期化＆依存取得
+          mkdir -p /work/ws
+          cd /work/ws
+          west init -l /work/config
+          cd "$(west topdir)"
+          west update
+          west zephyr-export
 
-            # 2) ワークスペースのトップ（= /work）に移動
-            cd "$(west topdir)"
-            echo "TOPDIR=$(pwd)"
+          # 2) 右側ビルド（★ EXTRA MODULES は必要なものだけ）
+          EXTRA_MODS="/work/zmk-rgbled-widget"
+          west build -s /work/zmk/app -b seeeduino_xiao_ble -d /work/ws/build-right -- \
+            -DSHIELD=tsumkey_r \
+            -DZMK_CONFIG=/work/config \
+            -DZMK_EXTRA_MODULES="${EXTRA_MODS}" || true
 
-            # 3) 依存取得 → Zephyr を CMake に登録
-            west update
-            west list || true
-            west zephyr-export
-            echo "ZEPHYR_BASE=${ZEPHYR_BASE:-"(unset)"}"
+          echo "=== tree(build-right) ==="
+          ls -la /work/ws/build-right || true
+          ls -la /work/ws/build-right/zephyr || true
 
-            # 4) 右用ビルド（出力は /work/ws/build-right）
-            west build -s zmk/app -b seeeduino_xiao_ble -d /work/ws/build-right -- \
-              -DSHIELD=tsumkey_r \
-              -DZMK_CONFIG=/work/config \
-              -DZMK_EXTRA_MODULES=/work || true
+          if [ -f /work/ws/build-right/zephyr/zephyr.dts ]; then
+            echo "=== /chosen (RIGHT) ==="
+            sed -n '/chosen {/,/};/p' /work/ws/build-right/zephyr/zephyr.dts || true
 
-            echo "=== tree(build-right) ==="
-            ls -la /work/ws/build-right || true
-            ls -la /work/ws/build-right/zephyr || true
-
-            # 5) DTS 抜粋表示
-            if [ -f /work/ws/build-right/zephyr/zephyr.dts ]; then
-              echo "=== /chosen (RIGHT) ==="
-              sed -n "/chosen {/,/};/p" /work/ws/build-right/zephyr/zephyr.dts || true
-
-              echo "=== KSCAN (RIGHT) ==="
-              awk "/label = \"KSCAN\"/{f=1} f{print} /};/{if(f){exit}}" /work/ws/build-right/zephyr/zephyr.dts \
-                || { echo "(fallback) context around KSCAN:"; grep -n "label = \"KSCAN\"" -n -A40 -B5 /work/ws/build-right/zephyr/zephyr.dts || true; }
-            else
-              echo "::error::zephyr.dts not found. Dumping CMake/Zephyr logs..."
-              find /work/ws/build-right -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
-              exit 1
-            fi
-          '
+            echo "=== KSCAN (RIGHT) ==="
+            awk '/label = "KSCAN"/{f=1} f{print} /};/{if(f){exit}}' /work/ws/build-right/zephyr/zephyr.dts \
+              || { echo "(fallback)"; grep -n 'label = "KSCAN"' -n -A40 -B5 /work/ws/build-right/zephyr/zephyr.dts || true; }
+          else
+            echo "::error::zephyr.dts not found. Dumping logs..."
+            find /work/ws/build-right -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
+            exit 1
+          fi
+          BASH
 
       - name: Upload DTS artifacts (right)
         uses: actions/upload-artifact@v4
