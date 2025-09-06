@@ -2,6 +2,10 @@ name: ZMK build + DTS dump
 
 on: [push, pull_request, workflow_dispatch]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   # 既存：ZMK 公式の再利用ワークフロー
   build:
