@@ -150,7 +150,7 @@ jobs:
           # ★ 必要なモジュールのみを指定（循環回避）
           EXTRA_MODS="/work/zmk-rgbled-widget"
           west build -s /work/zmk/app -b seeeduino_xiao_ble -d /work/ws/build-right -- \
-            -DSHIELD=tsumkey_l \
+            -DSHIELD=tsumkey_r \
             -DZMK_CONFIG=/work/config \
             -DZMK_EXTRA_MODULES="${EXTRA_MODS}" || true
           echo "::endgroup::"
