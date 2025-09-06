@@ -6,7 +6,7 @@ permissions:
   contents: read
 
 jobs:
-  # 本番ビルド（既存）
+  # 既存の本番ビルド（ZMK公式の再利用ワークフロー）
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
 
@@ -69,9 +69,12 @@ jobs:
             # 5) DTS 抜粋表示
             if [ -f /work/ws/build-left/zephyr/zephyr.dts ]; then
               echo "=== /chosen (LEFT) ==="
-              sed -n "/chosen {/,/};/p" /work/ws/build-left/zephyr/zephyr.dts
+              sed -n "/chosen {/,/};/p" /work/ws/build-left/zephyr/zephyr.dts || true
+
               echo "=== KSCAN (LEFT) ==="
-              sed -n "/label = \\"KSCAN\\"/,/};/p" /work/ws/build-left/zephyr/zephyr.dts
+              # awkで 'label = "KSCAN"' から対応する閉じカッコまでを出力（失敗時はgrepにフォールバック）
+              awk "/label = \"KSCAN\"/{f=1} f{print} /};/{if(f){exit}}" /work/ws/build-left/zephyr/zephyr.dts \
+                || { echo "(fallback) context around KSCAN:"; grep -n "label = \"KSCAN\"" -n -A40 -B5 /work/ws/build-left/zephyr/zephyr.dts || true; }
             else
               echo "::error::zephyr.dts not found. Dumping CMake/Zephyr logs..."
               find /work/ws/build-left -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
@@ -148,9 +151,11 @@ jobs:
             # 5) DTS 抜粋表示
             if [ -f /work/ws/build-right/zephyr/zephyr.dts ]; then
               echo "=== /chosen (RIGHT) ==="
-              sed -n "/chosen {/,/};/p" /work/ws/build-right/zephyr/zephyr.dts
+              sed -n "/chosen {/,/};/p" /work/ws/build-right/zephyr/zephyr.dts || true
+
               echo "=== KSCAN (RIGHT) ==="
-              sed -n "/label = \\"KSCAN\\"/,/};/p" /work/ws/build-right/zephyr/zephyr.dts
+              awk "/label = \"KSCAN\"/{f=1} f{print} /};/{if(f){exit}}" /work/ws/build-right/zephyr/zephyr.dts \
+                || { echo "(fallback) context around KSCAN:"; grep -n "label = \"KSCAN\"" -n -A40 -B5 /work/ws/build-right/zephyr/zephyr.dts || true; }
             else
               echo "::error::zephyr.dts not found. Dumping CMake/Zephyr logs..."
               find /work/ws/build-right -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
