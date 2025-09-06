@@ -43,31 +43,37 @@ jobs:
             # 0.5) Git の安全ディレクトリを緩和（CI用）
             git config --global --add safe.directory "*"
 
-            # 1) west ワークスペース作成 & 依存取得
-            mkdir -p ws && cd ws
+            # 1) west ワークスペース作成
+            mkdir -p /work/ws && cd /work/ws
             west init -l /work/config
-            west update
-            west list
 
-            # 2) 左用ビルド
-            west build -s zmk/app -b seeeduino_xiao_ble -d build-left -- \
+            # 2) ワークスペースのトップへ移動（= /work）
+            cd "$(west topdir)"
+            echo "TOPDIR=$(pwd)"
+
+            # 3) 依存取得
+            west update
+            west list || true
+
+            # 4) 左用ビルド（出力は /work/ws/build-left へ）
+            west build -s zmk/app -b seeeduino_xiao_ble -d /work/ws/build-left -- \
               -DSHIELD=tsumkey_l \
               -DZMK_CONFIG=/work/config \
               -DZMK_EXTRA_MODULES=/work || true
 
             echo "=== tree(build-left) ==="
-            ls -la build-left || true
-            ls -la build-left/zephyr || true
+            ls -la /work/ws/build-left || true
+            ls -la /work/ws/build-left/zephyr || true
 
-            # 3) DTS 抜粋表示
-            if [ -f build-left/zephyr/zephyr.dts ]; then
+            # 5) DTS 抜粋表示
+            if [ -f /work/ws/build-left/zephyr/zephyr.dts ]; then
               echo "=== /chosen (LEFT) ==="
-              sed -n "/chosen {/,/};/p" build-left/zephyr/zephyr.dts
+              sed -n "/chosen {/,/};/p" /work/ws/build-left/zephyr/zephyr.dts
               echo "=== KSCAN (LEFT) ==="
-              sed -n "/label = \\"KSCAN\\"/,/};/p" build-left/zephyr/zephyr.dts
+              sed -n "/label = \\"KSCAN\\"/,/};/p" /work/ws/build-left/zephyr/zephyr.dts
             else
               echo "::error::zephyr.dts not found. Dumping CMake/Zephyr logs..."
-              find build-left -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
+              find /work/ws/build-left -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
               exit 1
             fi
           '
@@ -115,31 +121,37 @@ jobs:
             # 0.5) Git の安全ディレクトリを緩和（CI用）
             git config --global --add safe.directory "*"
 
-            # 1) west ワークスペース作成 & 依存取得
-            mkdir -p ws && cd ws
+            # 1) west ワークスペース作成
+            mkdir -p /work/ws && cd /work/ws
             west init -l /work/config
-            west update
-            west list
 
-            # 2) 右用ビルド
-            west build -s zmk/app -b seeeduino_xiao_ble -d build-right -- \
+            # 2) ワークスペースのトップへ移動（= /work）
+            cd "$(west topdir)"
+            echo "TOPDIR=$(pwd)"
+
+            # 3) 依存取得
+            west update
+            west list || true
+
+            # 4) 右用ビルド（出力は /work/ws/build-right へ）
+            west build -s zmk/app -b seeeduino_xiao_ble -d /work/ws/build-right -- \
               -DSHIELD=tsumkey_r \
               -DZMK_CONFIG=/work/config \
               -DZMK_EXTRA_MODULES=/work || true
 
             echo "=== tree(build-right) ==="
-            ls -la build-right || true
-            ls -la build-right/zephyr || true
+            ls -la /work/ws/build-right || true
+            ls -la /work/ws/build-right/zephyr || true
 
-            # 3) DTS 抜粋表示
-            if [ -f build-right/zephyr/zephyr.dts ]; then
+            # 5) DTS 抜粋表示
+            if [ -f /work/ws/build-right/zephyr/zephyr.dts ]; then
               echo "=== /chosen (RIGHT) ==="
-              sed -n "/chosen {/,/};/p" build-right/zephyr/zephyr.dts
+              sed -n "/chosen {/,/};/p" /work/ws/build-right/zephyr/zephyr.dts
               echo "=== KSCAN (RIGHT) ==="
-              sed -n "/label = \\"KSCAN\\"/,/};/p" build-right/zephyr/zephyr.dts
+              sed -n "/label = \\"KSCAN\\"/,/};/p" /work/ws/build-right/zephyr/zephyr.dts
             else
               echo "::error::zephyr.dts not found. Dumping CMake/Zephyr logs..."
-              find build-right -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
+              find /work/ws/build-right -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
               exit 1
             fi
           '
