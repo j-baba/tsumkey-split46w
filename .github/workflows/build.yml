@@ -6,7 +6,7 @@ permissions:
   contents: read
 
 jobs:
-  # 既存の本番ビルド（ZMK公式の再利用ワークフロー）
+  # 既存の本番ビルド（ZMK 公式の再利用ワークフロー）
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
 
@@ -21,10 +21,32 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '
             set -euxo pipefail
+
+            # 0) 一時 manifest を生成（既存 config/west.yml があっても上書きしない）
+            if [ ! -f /work/config/west.yml ]; then
+              mkdir -p /work/config
+              printf "%s\n" \
+                "manifest:" \
+                "  remotes:" \
+                "    - name: zmkfirmware" \
+                "      url-base: https://github.com/zmkfirmware" \
+                "  projects:" \
+                "    - name: zmk" \
+                "      remote: zmkfirmware" \
+                "      revision: main" \
+                "      import: app/west.yml" \
+                "  self:" \
+                "    path: config" \
+                > /work/config/west.yml
+            fi
+
+            # 1) west ワークスペース作成 & 依存取得
             mkdir -p ws && cd ws
-            west init -m https://github.com/zmkfirmware/zmk.git --mr main .
+            west init -l /work/config .
             west update
             west list
+
+            # 2) 左用ビルド
             west build -s zmk/app -b seeeduino_xiao_ble -d build-left -- \
               -DSHIELD=tsumkey_l \
               -DZMK_CONFIG=/work/config \
@@ -34,11 +56,12 @@ jobs:
             ls -la build-left || true
             ls -la build-left/zephyr || true
 
+            # 3) DTS 抜粋表示
             if [ -f build-left/zephyr/zephyr.dts ]; then
               echo "=== /chosen (LEFT) ==="
               sed -n "/chosen {/,/};/p" build-left/zephyr/zephyr.dts
               echo "=== KSCAN (LEFT) ==="
-              sed -n "/label = \"KSCAN\"/,/};/p" build-left/zephyr/zephyr.dts
+              sed -n "/label = \\"KSCAN\\"/,/};/p" build-left/zephyr/zephyr.dts
             else
               echo "::error::zephyr.dts not found. Dumping CMake/Zephyr logs..."
               find build-left -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
@@ -67,10 +90,32 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/work -w /work zmkfirmware/zmk-build-arm:stable bash -lc '
             set -euxo pipefail
+
+            # 0) 一時 manifest を生成（既存 config/west.yml があっても上書きしない）
+            if [ ! -f /work/config/west.yml ]; then
+              mkdir -p /work/config
+              printf "%s\n" \
+                "manifest:" \
+                "  remotes:" \
+                "    - name: zmkfirmware" \
+                "      url-base: https://github.com/zmkfirmware" \
+                "  projects:" \
+                "    - name: zmk" \
+                "      remote: zmkfirmware" \
+                "      revision: main" \
+                "      import: app/west.yml" \
+                "  self:" \
+                "    path: config" \
+                > /work/config/west.yml
+            fi
+
+            # 1) west ワークスペース作成 & 依存取得
             mkdir -p ws && cd ws
-            west init -m https://github.com/zmkfirmware/zmk.git --mr main .
+            west init -l /work/config .
             west update
             west list
+
+            # 2) 右用ビルド
             west build -s zmk/app -b seeeduino_xiao_ble -d build-right -- \
               -DSHIELD=tsumkey_r \
               -DZMK_CONFIG=/work/config \
@@ -80,11 +125,12 @@ jobs:
             ls -la build-right || true
             ls -la build-right/zephyr || true
 
+            # 3) DTS 抜粋表示
             if [ -f build-right/zephyr/zephyr.dts ]; then
               echo "=== /chosen (RIGHT) ==="
               sed -n "/chosen {/,/};/p" build-right/zephyr/zephyr.dts
               echo "=== KSCAN (RIGHT) ==="
-              sed -n "/label = \"KSCAN\"/,/};/p" build-right/zephyr/zephyr.dts
+              sed -n "/label = \\"KSCAN\\"/,/};/p" build-right/zephyr/zephyr.dts
             else
               echo "::error::zephyr.dts not found. Dumping CMake/Zephyr logs..."
               find build-right -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
