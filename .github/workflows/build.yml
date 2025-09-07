@@ -80,6 +80,25 @@ jobs:
             find /work/ws/build-left -maxdepth 3 -type f \( -name "CMakeOutput.log" -o -name "CMakeError.log" -o -name "*.log" \) -print -exec tail -n +1 {} \; || true
             exit 1
           fi
+
+          echo "=== matrix-transform (LEFT) ==="
+          # ラベル名の違いに強い抽出（'matrix-transform' プロパティ参照先の定義ブロックを拾う）
+          # まず /chosen の参照先ラベル名を取得
+          XFORM_LABEL=$(awk '/zmk,matrix-transform/{ for(i=1;i<=NF;i++){ if($i ~ /&/){ gsub("&","",$i); gsub(";","",$i); print $i; break } } }' /work/ws/build-left/zephyr/zephyr.dts)
+          # そのラベル定義ブロックを出力
+          awk -v LBL="$XFORM_LABEL" "
+            \$0 ~ LBL\"[: ]\" {f=1}
+            f{print}
+            f && /};/ {exit}
+          " /work/ws/build-left/zephyr/zephyr.dts || true
+
+          echo "=== Kconfig (.config LEFT) excerpt ==="
+          if [ -f /work/ws/build-left/zephyr/.config ]; then
+            egrep -n '^(CONFIG_ZMK|CONFIG_USB|CONFIG_BT|CONFIG_SETTINGS|CONFIG_ZMK_SPLIT).*=' /work/ws/build-left/zephyr/.config || true
+          else
+            echo "(.config not found)"
+          fi
+
           BASH
           chmod +x ws/ci-left.sh
 
@@ -102,6 +121,14 @@ jobs:
             ${{ github.workspace }}/ws/build-left/zephyr/zephyr.dts
             ${{ github.workspace }}/ws/build-left/zephyr/zephyr.dts.pre
             ${{ github.workspace }}/ws/build-left/zephyr/include/generated/devicetree_generated.h
+          if-no-files-found: error
+
+      - name: Upload Kconfig (.config) (left)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kconfig-left
+          path: |
+            ${{ github.workspace }}/ws/build-left/zephyr/.config
           if-no-files-found: error
 
   introspect-right:
