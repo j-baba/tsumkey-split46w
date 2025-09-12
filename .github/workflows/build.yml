@@ -130,6 +130,7 @@ jobs:
           path: |
             ${{ github.workspace }}/ws/build-left/zephyr/.config
           if-no-files-found: error
+          include-hidden-files: true
 
   introspect-right:
     runs-on: ubuntu-latest
@@ -224,3 +225,12 @@ jobs:
             ${{ github.workspace }}/ws/build-right/zephyr/zephyr.dts.pre
             ${{ github.workspace }}/ws/build-right/zephyr/include/generated/devicetree_generated.h
           if-no-files-found: error
+
+      - name: Upload Kconfig (.config) (right)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kconfig-right
+          path: |
+            ${{ github.workspace }}/ws/build-right/zephyr/.config
+          if-no-files-found: error
+          include-hidden-files: true
