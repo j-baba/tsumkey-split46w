@@ -92,6 +92,9 @@ jobs:
             f && /};/ {exit}
           " /work/ws/build-left/zephyr/zephyr.dts || true
 
+          echo "=== search col-offset (RIGHT) ==="
+          grep -n "col-offset" /work/ws/build-right/zephyr/zephyr.dts || true
+
           echo "=== Kconfig (.config LEFT) excerpt ==="
           if [ -f /work/ws/build-left/zephyr/.config ]; then
             egrep -n '^(CONFIG_ZMK|CONFIG_USB|CONFIG_BT|CONFIG_SETTINGS|CONFIG_ZMK_SPLIT).*=' /work/ws/build-left/zephyr/.config || true
