@@ -21,6 +21,15 @@
     tsumkey_itf: input_transform {
         compatible = "zmk,input-transform";
     };
+
+    scale_right_local: processor_scale_right_local {
+        compatible = "zmk,input-processor-scaler";
+        type       = "matrix";
+        cols       = <5>;
+        rows       = <5>;
+        col-offset = <5>;
+        row-offset = <0>;
+    };
 };
 
 &{/chosen} {
@@ -30,13 +39,4 @@
 
 &kscan0 {
     input-processors = <&scale_right_local>;
-};
-
-scale_right_local: processor_scale_right_local {
-    compatible  = "zmk,input-processor-scaler";
-    type        = "matrix";
-    cols        = <5>;
-    rows        = <5>;
-    col-offset  = <5>;
-    row-offset  = <0>;
 };
