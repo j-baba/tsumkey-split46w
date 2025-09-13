@@ -1,17 +1,5 @@
 #include "tsumkey.dtsi"
-#include <input/processors.dtsi>
 
-&{/chosen} {
-    zmk,input-transform = &tsumkey_itf_l;
-};
-
- / {
-    tsumkey_itf_l: input_transform {
-        compatible = "zmk,input-transform";
-        /* 左は processors なし（＝オフセットなし） */
-    };
-};
- 
 / {
     chosen {
         /delete-property/ zmk,kscan;
