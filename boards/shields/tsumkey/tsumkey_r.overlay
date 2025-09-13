@@ -1,6 +1,6 @@
 #include "tsumkey.dtsi"
-#include <dt-bindings/zmk/input_transform.h>
 #include <input/processors.dtsi>
+#include <dt-bindings/zmk/input_transform.h>
 
 / {
     kscan0: kscan {
@@ -19,16 +19,19 @@
                     <&xiao_d 10 GPIO_ACTIVE_HIGH>;
     };
 
+    /* 右手ローカル入力を 5 列分右に寄せるスケーラ */
     scale_right_local: processor_scale_right_local {
         compatible = "zmk,input-processor-scaler";
-        type       = <0>;
-        codes      = <0 1>;     /* 0=COL, 1=ROW*/
+        #input-processor-cells = <0>;  /* phandle 引数は無し */
+        type       = <0>;              /* MATRIX */
+        codes      = <0 1>;            /* 0=COL, 1=ROW */
         cols       = <5>;
         rows       = <5>;
         col-offset = <5>;
         row-offset = <0>;
     };
 
+    /* 入力トランスフォーム: 右ローカルだけスケールして合流 */
     tsumkey_itf: input_transform {
         compatible = "zmk,input-transform";
         processors = <&scale_right_local>;
@@ -36,6 +39,6 @@
 };
 
 &{/chosen} {
-    zmk,matrix-transform = &default_transform;
+    zmk,matrix-transform = &default_transform; /* 10x5 */
     zmk,input-transform  = &tsumkey_itf;
-};
+}
