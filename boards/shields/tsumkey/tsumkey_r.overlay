@@ -22,6 +22,7 @@
     scale_right_local: processor_scale_right_local {
         compatible = "zmk,input-processor-scaler";
         type       = <0>;
+        codes      = <0 1>;     /* 0=COL, 1=ROW*/
         cols       = <5>;
         rows       = <5>;
         col-offset = <5>;
