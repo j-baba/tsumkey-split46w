@@ -1,6 +1,27 @@
 #include "tsumkey.dtsi"
 #include <input/processors.dtsi>
-#include <dt-bindings/zmk/input_transform.h>
+
+ / {
+    tsumkey_itf: input_transform {
+        compatible = "zmk,input-transform";
+    };
+
+    scale_right_local: processor_scale_right_local {
+        compatible = "zmk,input-processor-scaler";
+        cols = <5>;
+        rows = <5>;
+        col-offset = <5>;
+        row-offset = <0>;
+    };
+
+    scale_left_remote: processor_scale_left_remote {
+        compatible = "zmk,input-processor-scaler";
+        cols = <5>;
+        rows = <5>;
+        col-offset = <0>;
+        row-offset = <0>;
+    };
+ }
 
  / {
      kscan0: kscan {
@@ -25,34 +46,12 @@
     zmk,input-transform  = &tsumkey_itf;
 };
 
- / {
-    tsumkey_itf: input_transform {
-        compatible = "zmk,input-transform";
-    };
-
-    scale_right_local: processor_scale_right_local {
-        compatible = "zmk,input-processor-scaler";
-        cols = <5>;
-        rows = <5>;
-        col-offset = <5>;
-        row-offset = <0>;
-    };
-
-    scale_left_remote: processor_scale_left_remote {
-        compatible = "zmk,input-processor-scaler";
-        cols = <5>;
-        rows = <5>;
-        col-offset = <0>;
-        row-offset = <0>;
-    };
-};
-
 &kscan0 {
     input-transform  = <&tsumkey_itf>;
     input-processors = <&scale_right_local>;
-};
+}
 
-&zmk_split_bt_peripheral {
+&zmk_split_bt_central {
     input-transform  = <&tsumkey_itf>;
     input-processors = <&scale_left_remote>;
 };
