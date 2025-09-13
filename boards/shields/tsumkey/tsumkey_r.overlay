@@ -41,4 +41,4 @@
 &{/chosen} {
     zmk,matrix-transform = &default_transform; /* 10x5 */
     zmk,input-transform  = &tsumkey_itf;
-}
+};
