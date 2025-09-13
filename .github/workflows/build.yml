@@ -228,6 +228,9 @@ jobs:
           echo "=== search col-offset (RIGHT) ==="
           grep -n "col-offset" /work/ws/build-right/zephyr/zephyr.dts || true
 
+          echo "=== input_transform.h (RIGHT) ==="
+          cat /work/zmk/app/include/dt-bindings/zmk/input_transform.h
+
           echo "=== Kconfig (.config RIGHT) excerpt ==="
           if [ -f /work/ws/build-right/zephyr/.config ]; then
             egrep -n '^(CONFIG_ZMK|CONFIG_USB|CONFIG_BT|CONFIG_SETTINGS|CONFIG_ZMK_SPLIT).*=' /work/ws/build-right/zephyr/.config || true
