@@ -1,10 +1,8 @@
 #include "tsumkey.dtsi"
 
-/ {
-    chosen {
-        /delete-property/ zmk,kscan;
-        zmk,kscan = &kscan0;
-    };
+&{/chosen} {
+    /delete-property/ zmk,kscan;
+    zmk,kscan = &kscan0;
 };
  
 / {

@@ -5,7 +5,9 @@
 };
 
 &{/chosen} {
-    zmk,matrix-transform = &default_transform;
+    /delete-property/ zmk,kscan;
+    zmk,kscan = &kscan0;
+    /* matrix-transform は dtsi 側の default_transform を使う */
 };
 
 / {
