@@ -6,7 +6,7 @@
 
 &{/chosen} {
     zmk,matrix-transform = &default_transform;
-}
+};
 
 / {
     kscan0: kscan {
