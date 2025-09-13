@@ -50,8 +50,3 @@
     input-transform  = <&tsumkey_itf>;
     input-processors = <&scale_right_local>;
 };
-
-#&zmk_split_bt_central {
-#    input-transform  = <&tsumkey_itf>;
-#    input-processors = <&scale_left_remote>;
-#};
