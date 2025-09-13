@@ -98,6 +98,10 @@ jobs:
           else
             echo "(.config not found)"
           fi
+      
+          echo "=== split node labels (LEFT) ==="
+          grep -n "zmk_split.*central" /work/ws/build-left/zephyr/zephyr.dts || true
+          grep -n "zmk_split.*periph"  /work/ws/build-left/zephyr/zephyr.dts || true
 
           BASH
           chmod +x ws/ci-left.sh
@@ -220,6 +224,10 @@ jobs:
           else
             echo "(.config not found)"
           fi
+      
+          echo "=== split node labels (RIGHT) ==="
+          grep -n "zmk_split.*central" /work/ws/build-right/zephyr/zephyr.dts || true
+          grep -n "zmk_split.*periph"  /work/ws/build-right/zephyr/zephyr.dts || true
 
           BASH
           chmod +x ws/ci-right.sh
