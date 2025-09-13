@@ -221,6 +221,13 @@ jobs:
             f && /};/ {exit}
           " /work/ws/build-right/zephyr/zephyr.dts || true
 
+          echo "=== split node labels (RIGHT) ==="
+          grep -n "zmk_split.*central" /work/ws/build-right/zephyr/zephyr.dts || true
+          grep -n "zmk_split.*periph"  /work/ws/build-right/zephyr/zephyr.dts || true
+
+          echo "=== search col-offset (RIGHT) ==="
+          grep -n "col-offset" /work/ws/build-right/zephyr/zephyr.dts || true
+
           echo "=== Kconfig (.config RIGHT) excerpt ==="
           if [ -f /work/ws/build-right/zephyr/.config ]; then
             egrep -n '^(CONFIG_ZMK|CONFIG_USB|CONFIG_BT|CONFIG_SETTINGS|CONFIG_ZMK_SPLIT).*=' /work/ws/build-right/zephyr/.config || true
@@ -228,10 +235,6 @@ jobs:
             echo "(.config not found)"
           fi
       
-          echo "=== split node labels (RIGHT) ==="
-          grep -n "zmk_split.*central" /work/ws/build-right/zephyr/zephyr.dts || true
-          grep -n "zmk_split.*periph"  /work/ws/build-right/zephyr/zephyr.dts || true
-
           BASH
           chmod +x ws/ci-right.sh
 

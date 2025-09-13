@@ -1,5 +1,5 @@
 #include "tsumkey.dtsi"
-// #include <input/processors.dtsi>   // ← 使わないので一時的に外してOK
+#include <input/processors.dtsi>
 
 / {
     kscan0: kscan {
@@ -17,45 +17,26 @@
                     <&xiao_d 9  GPIO_ACTIVE_HIGH>,
                     <&xiao_d 10 GPIO_ACTIVE_HIGH>;
     };
-};
 
-/* 入力トランスフォームは一時無効化
-&{/chosen} {
-    zmk,input-transform = &tsumkey_itf;
-};
-
- / {
     tsumkey_itf: input_transform {
         compatible = "zmk,input-transform";
     };
 };
-*/
 
-/* 一時的に input-processors も無効化
+&{/chosen} {
+    zmk,matrix-transform = &default_transform;
+    zmk,input-transform  = &tsumkey_itf;
+};
+
 &kscan0 {
-    // input-processors = <&scale_right_local>;
+    input-processors = <&scale_right_local>;
 };
 
 scale_right_local: processor_scale_right_local {
-    compatible = "zmk,input-processor-scaler";
-    // type = "matrix";   // ★後で戻すときに指定
-    cols = <5>;
-    rows = <5>;
-    col-offset = <5>;
-    row-offset = <0>;
+    compatible  = "zmk,input-processor-scaler";
+    type        = "matrix";
+    cols        = <5>;
+    rows        = <5>;
+    col-offset  = <5>;
+    row-offset  = <0>;
 };
-
-/* ← split のラベルが未確定なので、ここもコメントアウト
-&zmk_split_bt_central {
-    input-processors = <&scale_left_remote>;
-};
-
-scale_left_remote: processor_scale_left_remote {
-    compatible = "zmk,input-processor-scaler";
-    // type = "matrix";   // ★後で戻すときに指定
-    cols = <5>;
-    rows = <5>;
-    col-offset = <0>;
-    row-offset = <0>;
-};
-*/
