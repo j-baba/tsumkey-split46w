@@ -18,10 +18,6 @@
                     <&xiao_d 10 GPIO_ACTIVE_HIGH>;
     };
 
-    tsumkey_itf: input_transform {
-        compatible = "zmk,input-transform";
-    };
-
     scale_right_local: processor_scale_right_local {
         compatible = "zmk,input-processor-scaler";
         type       = "matrix";
@@ -30,13 +26,14 @@
         col-offset = <5>;
         row-offset = <0>;
     };
+
+    tsumkey_itf: input_transform {
+        compatible = "zmk,input-transform";
+        processors = <&scale_right_local>;
+    };
 };
 
 &{/chosen} {
     zmk,matrix-transform = &default_transform;
     zmk,input-transform  = &tsumkey_itf;
-};
-
-&kscan0 {
-    input-processors = <&scale_right_local>;
 };
