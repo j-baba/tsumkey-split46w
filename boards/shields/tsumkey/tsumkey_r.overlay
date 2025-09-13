@@ -1,4 +1,5 @@
 #include "tsumkey.dtsi"
+#include <dt-bindings/zmk/input_transform.h>
 #include <input/processors.dtsi>
 
 / {
@@ -20,7 +21,7 @@
 
     scale_right_local: processor_scale_right_local {
         compatible = "zmk,input-processor-scaler";
-        type       = "matrix";
+        type       = <INPUT_TRANSFORM_TYPE_MATRIX>;
         cols       = <5>;
         rows       = <5>;
         col-offset = <5>;
