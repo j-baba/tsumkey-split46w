@@ -1,6 +1,5 @@
 #include "tsumkey.dtsi"
 
-/* 左：5×5、オフセット無し（左ブロック担当） */
 &{/} {
     left_transform: keymap_transform_left {
         compatible = "zmk,matrix-transform";
@@ -14,14 +13,13 @@
             RC(4,0) RC(4,1) RC(4,2) RC(4,3) RC(4,4)
         >;
     };
-}
+};
 
 &{/chosen} {
     zmk,matrix-transform = &left_transform;
     zmk,kscan = &kscan0;
-}
+};
 
-/* ★物理配線の行順に合わせる：D0, D6, D9, D8, D7 */
 &{/} {
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
@@ -38,4 +36,4 @@
                     <&xiao_d 4 GPIO_ACTIVE_HIGH>,
                     <&xiao_d 5 GPIO_ACTIVE_HIGH>;
     };
-}
+};
