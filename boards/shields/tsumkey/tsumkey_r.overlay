@@ -49,7 +49,7 @@
 };
 
 /* リモート（左）経路にはスケーラを付けない */
-&zmk_split_bt_peripheral {
+&zmk_split_peripheral {
     /* input-processors を付けない（=シフトなし） */
 };
 
