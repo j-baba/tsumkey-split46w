@@ -1,6 +1,6 @@
 #include "tsumkey.dtsi"
 
-/* 左：5×5 の変換、オフセット無しで「左側ブロック」を担当 */
+/* 左：5×5、オフセット無し（左ブロック担当） */
 &{/} {
     left_transform: keymap_transform_left {
         compatible = "zmk,matrix-transform";
@@ -14,30 +14,28 @@
             RC(4,0) RC(4,1) RC(4,2) RC(4,3) RC(4,4)
         >;
     };
-};
+}
 
 &{/chosen} {
     zmk,matrix-transform = &left_transform;
     zmk,kscan = &kscan0;
-};
+}
 
-/* 左側の実配線：まずは「テストA」として D0..D4 の自然順で試す */
+/* ★物理配線の行順に合わせる：D0, D6, D9, D8, D7 */
 &{/} {
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         label = "KSCAN";
         diode-direction = "col2row";
-        /* ★テストA：自然順（ズレが消えるかの判定用） */
         row-gpios = <&xiao_d 0 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
-                    <&xiao_d 1 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
-                    <&xiao_d 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
-                    <&xiao_d 3 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
-                    <&xiao_d 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
-
+                    <&xiao_d 6 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
+                    <&xiao_d 9 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
+                    <&xiao_d 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
+                    <&xiao_d 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
         col-gpios = <&xiao_d 1 GPIO_ACTIVE_HIGH>,
                     <&xiao_d 2 GPIO_ACTIVE_HIGH>,
                     <&xiao_d 3 GPIO_ACTIVE_HIGH>,
                     <&xiao_d 4 GPIO_ACTIVE_HIGH>,
                     <&xiao_d 5 GPIO_ACTIVE_HIGH>;
     };
-};
+}
