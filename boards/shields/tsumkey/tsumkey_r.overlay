@@ -1,9 +1,8 @@
 /* tsumkey_r.overlay（右：Central） */
-
 #include "tsumkey.dtsi"
 #include <input/processors.dtsi>
 
-/* --- 右の物理スキャン --- */
+/* 右の物理スキャン */
 &{/} {
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
@@ -20,64 +19,37 @@
                     <&xiao_d 9 GPIO_ACTIVE_HIGH>,
                     <&xiao_d 10 GPIO_ACTIVE_HIGH>;
     };
-};
+}
 
-/* --- Central は 10×5 の共通 transform を採用（offset なし） --- */
 &{/chosen} {
-    zmk,matrix-transform = &default_transform;  /* ※ tsu mkey.dtsi の 10×5 をそのまま使う */
     zmk,kscan = &kscan0;
+    zmk,matrix-transform = &default_transform;   /* 共通 10×5 を採用 */
+    zmk,input-transform = &tsumkey_itf_r;        /* 右だけ入力チェーンを使う */
+}
 
-    /* 入力変換チェーンを有効化 */
-    zmk,input-transform = &tsumkey_itf_r;
-};
-
-/* --- 入力変換の定義（右ローカルだけ +5 列シフト） --- */
+/* 入力チェーン定義（中身は空でOK） */
 &{/} {
     tsumkey_itf_r: input_transform {
         compatible = "zmk,input-transform";
-
-        /* ここがポイント：
-           - 右ローカル入力（kscan0）には +5 列のシフトを適用
-           - 左リモート入力（BLE peripheral 経由）には何もしない
-        */
     };
-};
 
-/* 右ローカル入力にだけスケーラを割り当てる */
-&kscan0 {
-    input-processors = <&scale_right_local>;
-};
-
-/* リモート（左）経路にはスケーラを付けない */
-&zmk_split_peripheral {
-    /* input-processors を付けない（=シフトなし） */
-};
-
-/* スケーラ実体：列を +5 シフト（行シフトは 0） */
-&{/} {
+    /* 右ローカル用スケーラ（+5列） */
     scale_right_local: processor_scale_right_local {
         compatible = "zmk,input-processor-scaler";
 
-        /* scaler が要求するプロパティ（ZMK 現行仕様に合わせる） */
-        /* 型：matrix（数値 0） */
-        type = <0>;                /* = INPUT_TRANSFORM_TYPE_MATRIX */
-
-        /* セル数は 2 固定（op, arg） */
+        /* 型: matrix (=0) / セル数: 2 固定 */
+        type = <0>;
         #input-processor-cells = <2>;
 
-        /* 操作列：col +5 のみ適用。rows/cols の宣言不要版。
-           op 値と引数は ZMK の dt-bindings に準拠します。
-           もしビルドで op 値が合わないエラーが出た場合は、
-           この行は一旦コメントアウトして、下の簡易版を使ってください。
-        */
-        codes = <
-            (0x12 5)  /* 例：OP_COL_OFFSET=0x12, +5 */
-        >;
-
-        /* 簡易版（codes が使えない場合は、こちらの4プロパティ版でも可な構成が多いです）:
-           cols = <5>; rows = <5>;
-           col-offset = <5>;
-           row-offset = <0>;
-        */
+        /* ★ “簡易版” 推奨：これが一番コケにくい */
+        cols = <5>;
+        rows = <5>;
+        col-offset = <5>;
+        row-offset = <0>;
     };
+};
+
+/* 右ローカル入力にだけスケーラを適用 */
+&kscan0 {
+    input-processors = <&scale_right_local>;
 };
