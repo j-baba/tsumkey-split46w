@@ -32,12 +32,12 @@
             RC(4,0) RC(4,1) RC(4,2) RC(4,3) RC(4,4)
         >;
     };
-}
+};
 
 /* このボードで使う KSCAN/transform を選択 */
 &{/chosen} {
     zmk,kscan = &kscan0;
     zmk,matrix-transform = &right_transform;
-}
+};
 
 /* 注意: input-processors / input-transform は一切書かない */
