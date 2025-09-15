@@ -1,7 +1,12 @@
-#include <dt-bindings/zmk/matrix_transform.h>
+/* boards/shields/tsumkey/tsumkey_r.overlay */
+#include "tsumkey.dtsi"
 
-/* 右の物理スキャン */
-&{/} {
+&{/chosen} {
+    zmk,kscan = &kscan0;
+    zmk,matrix-transform = &right_transform;
+};
+
+/ {
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         label = "KSCAN";
@@ -18,11 +23,10 @@
                     <&xiao_d 10 GPIO_ACTIVE_HIGH>;
     };
 
-    /* 右: 5×5、列オフセット +5（＝全体の列5〜9） */
     right_transform: keymap_transform_right {
         compatible = "zmk,matrix-transform";
         columns = <5>;
-        rows    = <5>;
+        rows = <5>;
         col-offset = <5>;
         map = <
             RC(0,0) RC(0,1) RC(0,2) RC(0,3) RC(0,4)
@@ -33,11 +37,3 @@
         >;
     };
 };
-
-/* このボードで使う KSCAN/transform を選択 */
-&{/chosen} {
-    zmk,kscan = &kscan0;
-    zmk,matrix-transform = &right_transform;
-};
-
-/* 注意: input-processors / input-transform は一切書かない */
