@@ -1,6 +1,4 @@
-/* tsumkey_r.overlay（右：Central） */
-#include "tsumkey.dtsi"
-#include <input/processors.dtsi>
+#include <dt-bindings/zmk/matrix_transform.h>
 
 /* 右の物理スキャン */
 &{/} {
@@ -19,37 +17,27 @@
                     <&xiao_d 9 GPIO_ACTIVE_HIGH>,
                     <&xiao_d 10 GPIO_ACTIVE_HIGH>;
     };
-};
 
+    /* 右: 5×5、列オフセット +5（＝全体の列5〜9） */
+    right_transform: keymap_transform_right {
+        compatible = "zmk,matrix-transform";
+        columns = <5>;
+        rows    = <5>;
+        col-offset = <5>;
+        map = <
+            RC(0,0) RC(0,1) RC(0,2) RC(0,3) RC(0,4)
+            RC(1,0) RC(1,1) RC(1,2) RC(1,3) RC(1,4)
+            RC(2,0) RC(2,1) RC(2,2) RC(2,3) RC(2,4)
+            RC(3,0) RC(3,1) RC(3,2) RC(3,3) RC(3,4)
+            RC(4,0) RC(4,1) RC(4,2) RC(4,3) RC(4,4)
+        >;
+    };
+}
+
+/* このボードで使う KSCAN/transform を選択 */
 &{/chosen} {
     zmk,kscan = &kscan0;
-    zmk,matrix-transform = &default_transform;   /* 共通 10×5 を採用 */
-    zmk,input-transform = &tsumkey_itf_r;        /* 右だけ入力チェーンを使う */
-};
+    zmk,matrix-transform = &right_transform;
+}
 
-/* 入力チェーン定義（中身は空でOK） */
-&{/} {
-    tsumkey_itf_r: input_transform {
-        compatible = "zmk,input-transform";
-    };
-
-    /* 右ローカル用スケーラ（+5列） */
-    scale_right_local: processor_scale_right_local {
-        compatible = "zmk,input-processor-scaler";
-
-        /* 型: matrix (=0) / セル数: 2 固定 */
-        type = <0>;
-        #input-processor-cells = <2>;
-
-        /* ★ “簡易版” 推奨：これが一番コケにくい */
-        cols = <5>;
-        rows = <5>;
-        col-offset = <5>;
-        row-offset = <0>;
-    };
-};
-
-/* 右ローカル入力にだけスケーラを適用 */
-&kscan0 {
-    input-processors = <&scale_right_local>;
-};
+/* 注意: input-processors / input-transform は一切書かない */
