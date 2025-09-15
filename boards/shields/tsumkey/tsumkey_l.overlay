@@ -24,4 +24,4 @@
     zmk,kscan = &kscan0;                 /* 念のため明示 */
     zmk,matrix-transform = &default_transform; /* 共通 10×5 を採用 */
     /* zmk,input-transform は左では不要（書かない） */
-}
+};

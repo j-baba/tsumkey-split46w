@@ -19,13 +19,13 @@
                     <&xiao_d 9 GPIO_ACTIVE_HIGH>,
                     <&xiao_d 10 GPIO_ACTIVE_HIGH>;
     };
-}
+};
 
 &{/chosen} {
     zmk,kscan = &kscan0;
     zmk,matrix-transform = &default_transform;   /* 共通 10×5 を採用 */
     zmk,input-transform = &tsumkey_itf_r;        /* 右だけ入力チェーンを使う */
-}
+};
 
 /* 入力チェーン定義（中身は空でOK） */
 &{/} {
