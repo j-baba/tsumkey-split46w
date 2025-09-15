@@ -1,11 +1,2 @@
-/* tsumkey.dtsi
- *
- * 共有ベース。ここでは ZMK 関連ノード（matrix-transform / input-transform / kscan / chosen）
- * を一切定義しません。左右固有の定義は各 overlay にのみ記述します。
- *
- * ここに共通のハード構成（将来、バッテリ計測やセンサー等）を足したい場合だけ追記します。
- */
-
 / {
-    /* Intentionally left empty. */
 };

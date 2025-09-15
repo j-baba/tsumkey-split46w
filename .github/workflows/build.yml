@@ -106,6 +106,9 @@ jobs:
           grep -n "zmk_split.*central" /work/ws/build-left/zephyr/zephyr.dts || true
           grep -n "zmk_split.*periph"  /work/ws/build-left/zephyr/zephyr.dts || true
 
+          echo "=== PHYSICAL_LAYOUT_KEY_ROTATION (LEFT) ==="
+          grep -n 'PHYSICAL_LAYOUT_KEY_ROTATION' ws/build-left/zephyr/.config || true
+
           BASH
           chmod +x ws/ci-left.sh
 
@@ -230,6 +233,9 @@ jobs:
 
           echo "=== input_transform.h (RIGHT) ==="
           cat /work/zmk/app/include/dt-bindings/zmk/input_transform.h
+
+          echo "=== PHYSICAL_LAYOUT_KEY_ROTATION (RIGHT) ==="
+          grep -n 'PHYSICAL_LAYOUT_KEY_ROTATION' ws/build-right/zephyr/.config || true
 
           echo "=== Kconfig (.config RIGHT) excerpt ==="
           if [ -f /work/ws/build-right/zephyr/.config ]; then
