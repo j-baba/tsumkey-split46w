@@ -113,28 +113,28 @@
 &kp JP_QUOTE  &kp JP_DQUOTE   &kp EXCLAMATION  &trans            &kp JP_BACKQUOTE    &kp JP_PIPE       &kp JP_LPAREN    &kp JP_RPAREN      &trans   &kp PERCENT
 &kp JP_AT     &kp SEMICOLON   &kp DOLLAR       &kp JP_PLUS       &kp JP_ASTERISK     &kp HASH          &kp JP_LBRACKET  &kp JP_RBRACKET    &trans   &kp JP_CARET
 &trans        &trans          &kp JP_COLON     &trans            &kp JP_BSLH         &kp JP_AMPERSAND  &kp JP_LBRACE    &kp JP_RBRACE      &trans   &kp JP_TILDE
-&kp LEFT_GUI  &trans          &kp UP_ARROW     &lt 3 ESC         &lt 1 SPACE         &lt 2 ENTER       &mkp MB1         &kp K_SCROLL_UP    &trans   &kp JP_UNDERSCORE
+&kp LEFT_GUI  &trans          &kp UP_ARROW     &lt 3 ESC         &lt 1 SPACE         &lt 2 ENTER       &mkp MB2         &kp K_SCROLL_UP    &trans   &kp JP_UNDERSCORE
 &trans        &kp LEFT_ARROW  &kp DOWN_ARROW   &kp RIGHT_ARROW   &kp TAB             &kp DELETE        &kp HOME         &kp K_SCROLL_DOWN  &kp END  &trans
             >;
         };
 
         layer_2 {
             bindings = <
-&kp F1        &kp F2          &kp F3          &kp F4           &kp F5         &kp COMMA      &kp NUMBER_7    &kp NUMBER_8    &kp NUMBER_9      &trans
-&kp F6        &kp F7          &kp F8          &kp F9           &kp F10        &kp DOT        &kp NUMBER_4    &kp NUMBER_5    &kp NUMBER_6      &trans
-&kp F11       &kp F12         &trans          &trans           &trans         &kp NUMBER_0   &kp NUMBER_1    &kp NUMBER_2    &kp NUMBER_3      &trans
-&kp LEFT_GUI  &trans          &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB1        &kp UP_ARROW    &trans            &kp MINUS
+&kp F1        &kp F2          &kp F3          &kp F4           &kp F5         &kp COMMA      &kp NUMBER_7    &kp NUMBER_8    &kp NUMBER_9     &trans
+&kp F6        &kp F7          &kp F8          &kp F9           &kp F10        &kp DOT        &kp NUMBER_4    &kp NUMBER_5    &kp NUMBER_6     &trans
+&kp F11       &kp F12         &trans          &trans           &trans         &kp NUMBER_0   &kp NUMBER_1    &kp NUMBER_2    &kp NUMBER_3     &trans
+&kp LEFT_GUI  &trans          &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB2        &kp UP_ARROW    &trans           &kp MINUS
 &trans        &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TAB        &kp BACKSPACE  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans
             >;
         };
 
         layer_3 {
             bindings = <
-&trans  &trans          &trans          &trans           &trans    &bt BT_CLR  &bt BT_CLR_ALL  &trans          &trans            &pass
-&trans  &trans          &trans          &trans           &trans    &trans      &trans          &trans          &trans            &trans
-&trans  &trans          &trans          &trans           &trans    &trans      &trans          &trans          &trans            &trans
-&trans  &trans          &kp UP_ARROW    &trans           &trans    &trans      &mkp MB1        &kp UP_ARROWP   &trans            &trans
-&trans  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans    &mkp MB2    &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROWT  &trans
+&trans  &trans          &trans          &trans           &trans    &bt BT_CLR  &bt BT_CLR_ALL  &trans          &trans           &pass
+&trans  &trans          &trans          &trans           &trans    &trans      &trans          &trans          &trans           &trans
+&trans  &trans          &trans          &trans           &trans    &trans      &trans          &trans          &trans           &trans
+&trans  &trans          &kp UP_ARROW    &trans           &trans    &trans      &mkp MB2        &kp UP_ARROW    &trans           &trans
+&trans  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans    &mkp MB2    &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans
             >;
         };
     };
