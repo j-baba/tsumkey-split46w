@@ -76,22 +76,10 @@
     };
 
     macros {
-        pass: to_layer_0 {
+        pass: pass {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             bindings = <&kp J &kp U &kp N &kp I &kp C &kp H &kp I &kp NUMBER_0 &kp NUMBER_2 &kp NUMBER_2 &kp NUMBER_4 &kp EXCLAMATION>;
-            label = "TO_LAYER_0";
-        };
-    };
-
-    behaviors {
-        lt_to_layer_0: lt_to_layer_0 {
-            compatible = "zmk,behavior-hold-tap";
-            label = "LAYER_TAP_TO_0";
-            bindings = <&mo>, <&to_layer_0>;
-
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
         };
     };
 
