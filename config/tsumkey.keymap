@@ -101,11 +101,11 @@
 
         layer_1 {
             bindings = <
-&kp SINGLE_QUOTE  &kp DOUBLE_QUOTES  &kp EXCLAMATION  &trans    &kp GRAVE        &kp PIPE  &kp LPAR  &kp RPAR  &trans  &kp PERCENT
-&kp AT            &kp SEMICOLON      &kp DOLLAR       &kp PLUS  &kp ASTERISK     &kp HASH  &kp LBKT  &kp RBKT  &trans  &kp CARET
-&trans            &trans             &kp COLON        &trans    &kp BACKSLASH    &kp AMPS  &kp LBRC  &kp RBRC  &trans  &kp TILDE
-&trans                               &trans           &trans    &trans           &trans    &trans    &trans            &kp UNDERSCORE
-                  &trans             &trans           &trans    &trans           &trans    &trans    &trans    &trans
+&kp SINGLE_QUOTE  &kp DOUBLE_QUOTES  &kp EXCLAMATION  &trans    &kp GRAVE        &kp PIPE  &kp LPAR  &kp RPAR           &trans   &kp PERCENT
+&kp AT            &kp SEMICOLON      &kp DOLLAR       &kp PLUS  &kp ASTERISK     &kp HASH  &kp LBKT  &kp RBKT           &trans   &kp CARET
+&trans            &trans             &kp COLON        &trans    &kp BACKSLASH    &kp AMPS  &kp LBRC  &kp RBRC           &trans   &kp TILDE
+&trans                               &trans           &trans    &trans           &trans    &trans    &kp K_SCROLL_UP             &kp UNDERSCORE
+                  &trans             &trans           &trans    &trans           &trans    &kp HOME  &kp K_SCROLL_DOWN  &kp END
             >;
         };
 
