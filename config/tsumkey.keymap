@@ -124,7 +124,7 @@
 &kp F6        &kp F7          &kp F8          &kp F9           &kp F10        &kp DOT        &kp NUMBER_4    &kp NUMBER_5    &kp NUMBER_6      &trans
 &kp F11       &kp F12         &trans          &trans           &trans         &kp NUMBER_0   &kp NUMBER_1    &kp NUMBER_2    &kp NUMBER_3      &trans
 &kp LEFT_GUI  &trans          &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB1        &kp UP_ARROW    &trans            &kp MINUS
-&trans        &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TAB        &kp BACKSPACE  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROWT  &trans
+&trans        &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TAB        &kp BACKSPACE  &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &trans
             >;
         };
 
