@@ -9,16 +9,16 @@
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 100
 #define MOUSE 3
 
-// ==== マウス移動量====
-#define MV_L_SLOW   &mmv -5  0
-#define MV_R_SLOW   &mmv  5  0
-#define MV_U_SLOW   &mmv  0 -5
-#define MV_D_SLOW   &mmv  0  5
+// ==== マウス移動量 ====
+#define MV_L_SLOW   &mmv (-5)  (0)
+#define MV_R_SLOW   &mmv (5)   (0)
+#define MV_U_SLOW   &mmv (0)  (-5)
+#define MV_D_SLOW   &mmv (0)   (5)
 
-#define MV_L_FAST   &mmv -15  0
-#define MV_R_FAST   &mmv  15  0
-#define MV_U_FAST   &mmv   0 -15
-#define MV_D_FAST   &mmv   0  15
+#define MV_L_FAST   &mmv (-15)  (0)
+#define MV_R_FAST   &mmv (15)   (0)
+#define MV_U_FAST   &mmv (0)   (-15)
+#define MV_D_FAST   &mmv (0)    (15)
 
 // OS設定を日本語キーボードのまま使用するための変換定義
 #define JP_DQUOTE       AT                // "
