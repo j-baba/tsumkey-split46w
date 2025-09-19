@@ -102,7 +102,7 @@
 &kp Q               &kp W           &kp E           &kp R            &kp T          &kp Y          &kp U          &kp I          &kp O          &kp P
 &mt LSHIFT A        &kp S           &kp D           &kp F            &kp G          &kp H          &kp J          &kp K          &kp L          &kp JP_COLON
 &mt LSHIFT Z        &mt LALT X      &mt LCTRL C     &mt LSHIFT V     &kp B          &kp N          &kp M          &kp COMMA      &kp DOT        &kp SLASH
-&kp LEFT_GUI        &none           &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB1       &kp MV_U_SLOW  &none          &kp MINUS
+&mt LCTRL LEFT_GUI  &none           &kp UP_ARROW    &lt 3 ESC        &lt 1 SPACE    &lt 2 ENTER    &mkp MB1       &mmv (0) (-5)  &none          &kp MINUS
 &none               &kp LEFT_ARROW  &kp DOWN_ARROW  &kp RIGHT_ARROW  &kp TAB        &kp BACKSPACE  &kp MV_L_SLOW  &kp MV_D_SLOW  &kp MV_R_SLOW  &none
             >;
         };
