@@ -1,4 +1,0 @@
-/* i2c0 のスリープ状態ノードに、必要な pinctrl-cells を明示する */
-&i2c0_sleep {
-    #pinctrl-cells = <0>;
-};
