@@ -9,29 +9,11 @@
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 100
 #define MOUSE 3
 
-// ==== マウス移動量====
-#define U_MOUSE_MOVE_MAX 1400  // 最大速度設定（デフォルトは600）
-#undef MOVE_UP
-#undef MOVE_DOWN
-#undef MOVE_LEFT
-#undef MOVE_RIGHT
-#define MOVE_UP MOVE_VERT(-U_MOUSE_MOVE_MAX)
-#define MOVE_DOWN MOVE_VERT(U_MOUSE_MOVE_MAX)
-#define MOVE_LEFT MOVE_HOR(-U_MOUSE_MOVE_MAX)
-#define MOVE_RIGHT MOVE_HOR(U_MOUSE_MOVE_MAX)
-
+// ==== カーソル加速 ====
 &mmv {
-    time-to-max-speed-ms = <1000>;  // 最大速度に達するまでの時間（デフォルトは500）
+    time-to-max-speed-ms = <1000>;  // 最大速度に達するまでの時間（デフォルトは300）
+    acceleration-exponent = <1>;     // 0:等速, 1:等加速度, 2:線形加速（用途に応じて調整）
 };
-
-// ==== スクロール移動量====
-#define U_MOUSE_SCROLL_MAX 100  // 最大スクロール速度設定（デフォルトは10）
-#undef SCROLL_UP
-#undef SCROLL_DOWN
-#undef SCROLL_LEFT
-#undef SCROLL_RIGHT
-#define SCROLL_UP SCROLL_VERT(U_MOUSE_SCROLL_MAX)
-#define SCROLL_DOWN SCROLL_VERT(-U_MOUSE_SCROLL_MAX)
 
 // OS設定を日本語キーボードのまま使用するための変換定義
 #define JP_DQUOTE       AT                // "
